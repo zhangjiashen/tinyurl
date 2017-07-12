@@ -1,7 +1,7 @@
 /**
  * Created by zjs on 2017/6/14.
  */
-
+var UrlModel = require("../models/urlModel");
 var longToShortHash = {}
 var shortToLongHash = {};
 var encode = [];
@@ -25,7 +25,13 @@ var getShortUrl = function (longUrl) {
     if (longUrl.indexOf("http") === -1) {
         longUrl = "http://" + longUrl;
     }
+    UrlModel.findOne({longUrl:longUrl}, function (err, data) {
+        if (data) {
+            
+        } else {
 
+        }
+    });
     if (longToShortHash[longUrl] == null) {
         var shortUrl = generateShortUrl();
         longToShortHash[longUrl] = shortUrl;
