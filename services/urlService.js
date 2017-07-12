@@ -21,17 +21,26 @@ encode = encode.concat(genCharArray('A', 'Z'));
 encode = encode.concat(genCharArray('a', 'z'));
 encode = encode.concat(genCharArray('0', '9'));
 
-var getShortUrl = function (longUrl) {
+var getShortUrl = function (longUrl, callback) {
     if (longUrl.indexOf("http") === -1) {
         longUrl = "http://" + longUrl;
     }
     UrlModel.findOne({longUrl:longUrl}, function (err, data) {
         if (data) {
-            
+            callback(data);
         } else {
+            generateShortUrl(function (shortUrl) {
+                var url = new UrlModel({
+                    shortUrl:shortUrl,
+                    longUrl:longUrl
+                });
+                url.save();
+                callback(url);
+            });
 
         }
     });
+    /**
     if (longToShortHash[longUrl] == null) {
         var shortUrl = generateShortUrl();
         longToShortHash[longUrl] = shortUrl;
@@ -40,15 +49,22 @@ var getShortUrl = function (longUrl) {
     } else {
         return longToShortHash[longUrl];
     }
+     **/
 
 };
 
-var getLongUrl = function (shortUrl) {
+var getLongUrl = function (shortUrl, callback) {
+    UrlModel.findOne({shortUrl: shortUrl}, function (err, data) {
+        callback(data);
+    });
     return shortToLongHash[shortUrl];
 };
 
-var generateShortUrl = function () {
-    return convertTo64(Object.keys(longToShortHash).length);
+var generateShortUrl = function (callback) {
+    UrlModel.count({}, function (err, data) {
+        callback(convertTo64(data));
+    });
+    /*return convertTo64(Object.keys(longToShortHash).length); */
 }
 
 var convertTo64 =  function (num) {
