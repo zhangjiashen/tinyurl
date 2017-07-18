@@ -5,6 +5,7 @@ var indexRouter = require("./routes/index")
 
 var app = express();
 
+console.log(__dirname);
 app.use("/public", express.static(__dirname + "/public"));
 
 app.use("/api/v1", restRouter);
